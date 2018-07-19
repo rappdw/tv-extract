@@ -24,7 +24,7 @@ other data sources will be added in the future.
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Software Development :: Version Control :: Git',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'License :: MIT',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.7',
     ],
 
