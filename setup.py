@@ -21,7 +21,9 @@ other data sources will be added in the future.
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'Topic :: Python :: Library',
+        'Topic :: Scientific/Engineering :: Visualization',
+        'Topic :: Software Development :: Version Control :: Git',
+        'Topic :: Software Development :: Libraries :: Python Modules',
         'License :: MIT',
         'Programming Language :: Python :: 3.7',
     ],
@@ -41,9 +43,12 @@ other data sources will be added in the future.
 
     extras_require={
         'dev': [
-            'wheel>=0.30.0'
+            'wheel>=0.30.0',
+            'twine'
         ],
         'test': [
+            'pytest',
+            'pytest-cov',
         ],
     },
 
