@@ -25,6 +25,8 @@ other data sources will be added in the future.
         'Topic :: Software Development :: Version Control :: Git',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
 
@@ -36,6 +38,7 @@ other data sources will be added in the future.
         'setuptools>=18.0'
     ],
     install_requires=[
+        'dataclasses;python_version<"3.7"',
         'gitpython',
         'multiprocessing_logging',
         'ordered-set',
