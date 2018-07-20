@@ -17,6 +17,7 @@ def extract_config_from_json(config_data: dict) -> Config:
     for extract_dict in extract_dicts:
         repo_dicts = extract_dict['repos']
         repos = []
+        adjustments = []
         for repo_dict in repo_dicts:
             repos.append(Repo(repo_dict['name'], repo_dict['remote']))
         start_date = ''
@@ -25,8 +26,11 @@ def extract_config_from_json(config_data: dict) -> Config:
         end_date = ''
         if 'end_date' in extract_dict:
             end_date = extract_dict['end_date']
-        extracts.append(Extract(extract_dict['name'], repos, start_date, end_date))
-    
+        if 'adjustments' in extract_dict:
+            for adjustment in extract_dict['adjustments']:
+                adjustments.append(adjustment)
+        extracts.append(Extract(extract_dict['name'], repos, start_date, end_date, adjustments))
+
     output_path = config_data['output_path']
     log_level = config_data['logging'] if 'logging' in config_data else logging.INFO
     return Config(extracts, output_path, config_data['mailmap_file'], log_level)

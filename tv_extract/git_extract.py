@@ -1,11 +1,7 @@
-from __future__ import absolute_import
-
 import csv
 import logging
 import os
 import pickle
-
-import git
 
 from collections import defaultdict
 from pathlib import Path
@@ -192,7 +188,7 @@ class GitExtractor():
                                                           1 if revision.is_a_pr else 0])
 
 
-def update_repo(repo: Repo, repo_cache: Path):
+def update_repo(git, repo: Repo, repo_cache: Path):
     repo_dir = repo_cache / repo.name
     if repo_dir.exists():
         repo = git.Repo(str(repo_dir))
@@ -214,9 +210,11 @@ def git_extract(config: Config, cache_root: Path) -> None:
     for extract in config.extracts:
         for repo in extract.repos:
             repos[repo.name] = repo
+    # do this here to avoid errors during import if git isn't installed and other aspects of tv-extract are used
+    import git
     for repo in repos.values():
         logging.info(f"Updating repo: {repo.name}")
-        update_repo(repo, repo_cache)
+        update_repo(git, repo, repo_cache)
         repo_mailmap_file = repo_cache / repo.name / '.mailmap'
         if mailmap_file.exists():
             if repo_mailmap_file.exists():

@@ -1,5 +1,5 @@
 from .repo import Repo
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 from datetime import datetime, timezone
 
@@ -9,6 +9,7 @@ class Extract:
     repos: List[Repo]
     start_date:str = ''
     end_date:str = ''
+    adjustments:List[str] = field(default_factory=lambda: [])
 
     def get_begin_end_timestamps(self):
         if self.start_date:

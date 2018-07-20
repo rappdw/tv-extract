@@ -16,13 +16,17 @@ test_config_json = '''
           "remote": "git@github.com:rappdw/team-viewer-extract.gitextractor"
         }
       ],
-      "start_date": "2018-07-18"
+      "start_date": "2018-07-18",
+      "adjustments": [
+        "Repo,CommitHash,TimeStamp,Author,Language,Files,Lines,Code,Comments,Blanks,Revision Comment"
+      ]
     }
   ],
   "output_path": "~/.local/share/cache/TeamViewer",
   "mailmap_file": "~/.local/share/cache/.mailmap",
   "logging": 20
-}'''
+}
+'''
 
 
 def test_config_extractions():
@@ -31,3 +35,4 @@ def test_config_extractions():
     assert config.extracts[0].name == 'test'
     assert len(config.extracts[0].repos) == 2
     assert config.output_path == "~/.local/share/cache/TeamViewer"
+    assert len(config.extracts[0].adjustments) == 1
