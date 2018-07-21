@@ -22,19 +22,19 @@ configuration file is json.
       "name": "Project 1",
       "repos": [
         {
-          "name": "TeamViewer",
-          "remote": "git@github.com:rappdw/TeamViewer.gitextractor"
+          "name": "TeamView",
+          "remote": "git@github.com:rappdw/TeamViewer.git"
         },
         {
-          "name": "team-viewer-extract",
-          "remote": "git@github.com:rappdw/team-viewer-extract.gitextractor"
+          "name": "team-view-extract",
+          "remote": "git@github.com:rappdw/team-viewer-extract.git"
         }
       ],
       "start_date": "2018-07-18",
       "end_date": "2018-08-31"
     }
   ],
-  "output_path": "~/.local/share/cache/TeamViewer",
+  "output_path": "~/.local/share/cache/TeamView",
   "mailmap_file": "~/.local/share/cache/.mailmap",
   "logging": 20
 }
