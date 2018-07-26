@@ -1,6 +1,6 @@
 | Build | Test Coverage |
 | ----- | ------------- |
-| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg)](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg) |
+| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg)](https://codecov.io/gh/rappdw/tv-extract) |
 
 # Team View - Extract (Data extraction for team analysis)
 Extract team analysis data from git (current) 
