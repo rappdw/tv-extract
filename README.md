@@ -1,6 +1,7 @@
-| Build | Test Coverage |
-| ----- | ------------- |
-| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg)](https://codecov.io/gh/rappdw/tv-extract) |
+| Build | Test Coverage | Distro |
+| ----- | ------------- | ------ |
+| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg)](https://codecov.io/gh/rappdw/tv-extract) | [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tv-extract.svg)](https://pypi.org/project/tv-extract/)
+
 
 # Team View - Extract (Data extraction for team analysis)
 Extract team analysis data from git (current) 
@@ -11,6 +12,9 @@ and other relevant sources (future).
 1. [Tokei](https://github.com/Aaronepower/tokei) (This [fork](https://github.com/rappdw/tokei/network) has initial, 
 rudementary, support for Jupyter notebooks). Tokei is used to collect metrics on volume of source based per source 
 language.
+
+If you don't have rust installed and aren't currently using Tokei, We recommend utilizing the 
+[team-view-extract](https://hub.docker.com/r/rappdw/team-view-extract/) docker image.
 
 ## Setup
 
