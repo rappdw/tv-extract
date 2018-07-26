@@ -1,4 +1,8 @@
-# Team Viewer - Extract (Data extraction for team analysis)
+| Build | Test Coverage |
+| ----- | ------------- |
+| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://coveralls.io/repos/github/rappdw/tv-extract/badge.svg)](https://coveralls.io/github/rappdw/tv-extract) |
+
+# Team View - Extract (Data extraction for team analysis)
 Extract team analysis data from git (current) 
 and other relevant sources (future).
 
