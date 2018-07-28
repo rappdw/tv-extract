@@ -5,25 +5,28 @@ import os
 from ordered_set import OrderedSet
 from typing import Iterable
 from tv_extract.util import cli, cd
-from tv_extract.util.shell_cmds import getpipeoutput
 from tv_extract.data import FileInfo, Revision, RevisionGraph
 from tv_extract.gitextractor import extract_revision_graph
 
 
-def collect_file_info(revision_set: Iterable[Revision]):
+def collect_file_info(revision_set: Iterable[Revision], fn_get_output):
     total = 0
     cache = 0
     for revision in revision_set:
         total += 1
         if not revision.file_infos:
             logging.info(f"git checkout {revision.hash}")
-            getpipeoutput([f'git checkout {revision.hash} >/dev/null 2>&1'])
+            fn_get_output([f'git checkout {revision.hash} >/dev/null 2>&1'])
             # for some reason if we combine these, tokei gives incorrect results!!!!
-            lines = getpipeoutput(['tokei']).split('\n')
-            for line in lines[3:-3] + [lines[-2]]:
-                line = line.strip()
-                file_info = FileInfo(*line.rsplit(maxsplit=5))
-                revision.file_infos[file_info.language] = file_info
+            lines = fn_get_output(['tokei']).split('\n')
+            if len(lines) > 3:
+                for line in lines[3:-3] + [lines[-2]]:
+                    line = line.strip()
+                    file_info = FileInfo(*line.rsplit(maxsplit=5))
+                    revision.file_infos[file_info.language] = file_info
+            else:
+                debug = '\n'.join(lines)
+                logging.warning(f"Unexpected results from tokei: \n{debug}")
         else:
             cache += 1
     logging.info(f"Total revisions: {total}. {cache} found in cache")
@@ -62,7 +65,7 @@ def get_parent(revision: Revision):
     return revision.branch_parent
 
 
-def extract_complete_file_info(graph: RevisionGraph):
+def extract_complete_file_info(graph: RevisionGraph, fn_get_output):
     '''
     Given a revision graph, collect all file info
     using tokei for those revisions
@@ -76,10 +79,10 @@ def extract_complete_file_info(graph: RevisionGraph):
     # We use a custom .mailmap file to resolve autors. That was great while
     # we collected revision info (extract_revision_graph), but will block our ability to
     # checkout individual revisions, therefor, clear the .mailmap checkout (if it exists)
-    getpipeoutput(['git checkout -- .mailmap >/dev/null 2>&1'])
+    fn_get_output(['git checkout -- .mailmap >/dev/null 2>&1'])
 
-    collect_file_info(graph.revisions.values())
-    getpipeoutput(['git checkout master >/dev/null 2>&1'])
+    collect_file_info(graph.revisions.values(), fn_get_output)
+    fn_get_output(['git checkout master >/dev/null 2>&1'])
 
     collect_deltas(graph, OrderedSet.union(graph.master_revs, graph.not_a_merge))
 

@@ -59,7 +59,7 @@ def _extract_revision_graph(cache: LocCache, fn_get_output) -> RevisionGraph:
 
     if cache:
         cache.load_from_cache(graph)
-    extract_complete_file_info(graph)
+    extract_complete_file_info(graph, fn_get_output)
     return graph
 
 
