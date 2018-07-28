@@ -1,8 +1,9 @@
 import logging
 import os
 
-from ordered_set import OrderedSet
 from typing import Dict
+from tv_extract.gitextractor.loc_cache import LocCache
+from tv_extract.gitextractor.extract_complete_file_info import extract_complete_file_info
 from tv_extract.util import cli, cd
 from tv_extract.util.shell_cmds import getpipeoutput
 from tv_extract.data import Revision, RevisionGraph
@@ -21,17 +22,17 @@ def get_revisions(fn_get_output, graph, rev_list_cmds, is_master=False):
             graph.add_revision_to_graph(*get_revision_from_line(line), is_master=is_master)
 
 
-def extract_revision_graph() -> RevisionGraph:
+def extract_revision_graph(cache: LocCache) -> RevisionGraph:
     '''
     Get all revisions from the repo , key them by tree_hash, commit_hash as well as create a graph
     of revisions and a list of revisions merging to master
 
     :return: RevisionGraph
     '''
-    return _extract_revision_graph(getpipeoutput)
+    return _extract_revision_graph(cache, getpipeoutput)
 
 
-def _extract_revision_graph(fn_get_output) -> RevisionGraph:
+def _extract_revision_graph(cache: LocCache, fn_get_output) -> RevisionGraph:
     original_commit = fn_get_output(command_dict['original_commit'])
     graph = RevisionGraph(original_commit)
 
@@ -55,6 +56,10 @@ def _extract_revision_graph(fn_get_output) -> RevisionGraph:
                     logging.debug(f"{revision.hash} has multiple branch parents")
                     revision.is_a_pr = False
                 revision.branch_parent = parent
+
+    if cache:
+        cache.load_from_cache(graph)
+    extract_complete_file_info(graph, fn_get_output)
     return graph
 
 
