@@ -1,16 +1,22 @@
 import versioneer
+from os import path
 from setuptools import setup, find_packages
+
+
+here = path.abspath(path.dirname(__file__))
+
+
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='tv-extract',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description='Team Viewer - Data Extract for analysis',
-    long_description='''
-tv_extract extracts analytics information for Team Viewer. Currently the data extract source is git repositories, but
-other data sources will be added in the future.
-''',
-    url='',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url='https://github.com/rappdw/tv-extract',
 
     author='rappdw',
     author_email='rappdw@gmail.com',
@@ -32,10 +38,6 @@ other data sources will be added in the future.
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     include_package_data=True,
 
-    setup_requires=[
-        # Setuptools 18.0 properly handles Cython extensions.
-        'setuptools>=18.0'
-    ],
     install_requires=[
         'dataclasses;python_version<"3.7"',
         'gitpython',
