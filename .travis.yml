@@ -5,6 +5,8 @@ python:
   - "3.7"
   - "3.6"
 install:
+  - apt-get install cargo
+  - cargo install tokei
   - pip install codecov
   - pip install -e ".[test]"
 script:

@@ -1,5 +1,10 @@
-from tv_extract.gitextractor.extract_revision_graph import command_dict, get_revision_from_line, _extract_revision_graph
+from typing import List
 
+from tv_extract.data.pr import PullRequest
+from tv_extract.data.extract import Extract
+from tv_extract.gitextractor.extract_revision_graph import command_dict, get_revision_from_line, _extract_revision_graph
+from tv_extract.gitextractor.extract_pr_data import extract_pr_data
+from tv_extract.git_extract import GitExtractor
 
 def test_get_rev_from_line():
     line = 'tree_hash|sha|timestamp|date time tz_offset|author|email@domain||comments'
@@ -48,3 +53,33 @@ def test_extract_revisions():
     assert 'sha:3' in graph.merges
     assert 'sha:1' in graph.master_revs
     assert 'sha:3' in graph.master_revs
+
+def test_extract_pr():
+    graph = get_test_graph()
+    prs: List[PullRequest] = []
+    extract_pr_data(lambda pr: prs.append(pr), graph)
+    assert len(prs) == 1
+    assert prs[0].stamp == 3
+
+class Verifier:
+    def __init__(self):
+        self.accumulator = []
+
+    def writerow(self, row: List[str]):
+        self.accumulator.append(row)
+
+class ExtractionVerifier:
+    def __init__(self):
+        self.author_totals_info_writer = Verifier()
+        self.revision_info_writer = Verifier()
+        self.loc_info_writer = Verifier()
+        self.loc_delta_writer = Verifier()
+        self.repo_info_writer = Verifier()
+        self.prs_info_writer = Verifier()
+
+def test_gitextractor():
+    graph = get_test_graph()
+    extractor = GitExtractor(Extract("test", []), '', None)
+    extractor.files = ExtractionVerifier()
+    extractor.process_graph(None, graph)
+    print(extractor.files)
