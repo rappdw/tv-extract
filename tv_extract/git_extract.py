@@ -9,8 +9,8 @@ from shutil import copyfile
 
 from .util.cd import cd
 from .data import Config, Extract, PullRequest, Repo, Revision, RevisionGraph
-from .gitextractor import extract_complete_file_info, extract_revision_graph, extract_pr_data
-
+from .gitextractor import extract_revision_graph, extract_pr_data
+from .gitextractor.loc_cache import PickleCache
 
 
 class _FileHandles:  # pragma: no cover
@@ -70,16 +70,16 @@ class GitExtractor():
     def collect(self, repo_cache: Path, repo: Repo): # pragma: no cover
         self.projectname = repo.name
         with cd(str(repo_cache / repo.name)):
-            self.process_graph(self.cache_dir / f'{repo.name}.cache_data.pkl', extract_revision_graph())
+            cache = PickleCache(self.cache_dir / f'{repo.name}.cache_data.pkl')
+            graph = extract_revision_graph(cache)
+            self.process_graph(graph)
+            cache.save_to_cache(graph)
 
-    def process_graph(self, extract_cache, graph):
-        self.load_from_cache(graph, extract_cache)
-        extract_complete_file_info(graph)
+    def process_graph(self, graph):
         self.extract_total_authors(graph)
         self.extract_pr_info(graph)
         self.extract_code_info(graph)
         self.extract_revision_info(graph)
-        self.save_to_cache(graph, extract_cache)
 
     def load_from_cache(self, graph: RevisionGraph, cache: Path): # pragma: no cover
         if cache and cache.exists():
