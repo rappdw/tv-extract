@@ -83,7 +83,7 @@ def extract_complete_file_info(graph: RevisionGraph):
 
     collect_deltas(graph, OrderedSet.union(graph.master_revs, graph.not_a_merge))
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     conf, paths, outputpath = cli.get_cli()
 
     with open(outputpath, 'w', encoding='utf8') as f:

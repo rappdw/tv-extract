@@ -7,15 +7,18 @@ from tv_extract.util import cli, cd
 from tv_extract.util.shell_cmds import getpipeoutput
 from tv_extract.data import Revision, RevisionGraph
 
+command_dict = {
+    'original_commit': ['git rev-list --max-parents=0 HEAD'],
+    'initial_revisions': ['git rev-list --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "HEAD"', 'grep -v ^commit'],
+    'master_revisions': ['git rev-list --first-parent --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "HEAD"', 'grep -v ^commit'],
+}
 
-def get_revisions(graph, merge_switch=''):
-    lines = getpipeoutput(
-        [f'git rev-list {merge_switch} --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "HEAD"',
-         'grep -v ^commit']).split('\n')
+def get_revisions(fn_get_output, graph, rev_list_cmds, is_master=False):
+    lines = fn_get_output(rev_list_cmds).split('\n')
     for line in lines:
         line = line.strip()
         if line:
-            graph.add_revision_to_graph(*get_revision_from_line(line), is_master=merge_switch == '--first-parent')
+            graph.add_revision_to_graph(*get_revision_from_line(line), is_master=is_master)
 
 
 def extract_revision_graph() -> RevisionGraph:
@@ -25,17 +28,20 @@ def extract_revision_graph() -> RevisionGraph:
 
     :return: RevisionGraph
     '''
+    return _extract_revision_graph(getpipeoutput)
 
-    original_commit = getpipeoutput(['git rev-list --max-parents=0 HEAD'])
-    graph = RevisionGraph({}, {}, OrderedSet(), OrderedSet(), OrderedSet(), original_commit)
 
-    get_revisions(graph)
+def _extract_revision_graph(fn_get_output) -> RevisionGraph:
+    original_commit = fn_get_output(command_dict['original_commit'])
+    graph = RevisionGraph(original_commit)
+
+    get_revisions(fn_get_output, graph, command_dict['initial_revisions'])
 
     # This gets all commits to master (used to calculate code growth over time). Note that this
     # method isn't foolproof.
     # see: https://stackoverflow.com/questions/15875253/git-log-to-return-only-the-commits-made-to-the-master-branch
     # poke's answer
-    get_revisions(graph, '--first-parent')
+    get_revisions(fn_get_output, graph, command_dict['master_revisions'], True)
 
     # now fix up parentage based on what we've seen with the --first-parent logs
     for revision in graph.revisions.values():
@@ -67,7 +73,7 @@ def get_revision_from_line(line):
     return revision, parents
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     conf, paths, _ = cli.get_cli()
     graphs: Dict[str, RevisionGraph] = {}
     for path in paths:

@@ -32,7 +32,7 @@ def extract_pr_data(row_processor, graph: RevisionGraph):
                                           graph.linkage[rev], revision.branch_parent, rev, delta))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     conf, paths, outputpath = cli.get_cli()
     begin, end = cli.get_begin_end_timestamps(conf)
     with open(outputpath, 'w', encoding='utf8') as f:

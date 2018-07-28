@@ -1,16 +1,17 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List
 from ordered_set import OrderedSet
 from tv_extract.data.revision import Revision
 
 @dataclass
 class RevisionGraph:
-    revisions: Dict[str, Revision]
-    linkage: Dict[str, List[str]]
-    master_revs: OrderedSet
-    not_a_merge: OrderedSet
-    merges: OrderedSet
     original_commit: str
+    revisions: Dict[str, Revision] = field(default_factory=lambda: {})
+    linkage: Dict[str, List[str]] = field(default_factory=lambda: {})
+    master_revs: OrderedSet = field(default_factory=lambda: OrderedSet())
+    not_a_merge: OrderedSet = field(default_factory=lambda: OrderedSet())
+    merges: OrderedSet = field(default_factory=lambda: OrderedSet())
+
 
     def add_revision_to_graph(self, revision: Revision, parents: List[str], is_master: bool):
         if not revision.hash in self.revisions:

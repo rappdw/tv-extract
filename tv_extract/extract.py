@@ -36,6 +36,6 @@ def _extract(config: Config) -> None:
 
     # TODO: other extractors would be added here
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     extract()
     sys.exit(0)
