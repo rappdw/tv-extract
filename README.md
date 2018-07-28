@@ -1,6 +1,6 @@
 | Build | Test Coverage | Distro |
 | ----- | ------------- | ------ |
-| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg)](https://codecov.io/gh/rappdw/tv-extract) | [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tv-extract.svg)](https://pypi.org/project/tv-extract/)
+| [![Build Status](https://travis-ci.com/rappdw/tv-extract.svg?branch=master)](https://travis-ci.org/rappdw/tv-extract) | [![Coverage Status](https://codecov.io/gh/rappdw/tv-extract/branch/master/graph/badge.svg)](https://codecov.io/gh/rappdw/tv-extract) | [![PyPI - Version](https://img.shields.io/pypi/v/tv-extract.svg)](https://pypi.org/project/tv-extract/) [![PyPI - Wheel](https://img.shields.io/pypi/wheel/tv-extract.svg)](https://pypi.org/project/tv-extract/) |
 
 
 # Team View - Extract (Data extraction for team analysis)
