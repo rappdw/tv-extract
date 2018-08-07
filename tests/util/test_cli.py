@@ -19,6 +19,12 @@ test_config_json = '''
       "start_date": "2018-07-18",
       "adjustments": [
         "Repo,CommitHash,TimeStamp,Author,Language,Files,Lines,Code,Comments,Blanks,Revision Comment"
+      ],
+      "tod_adjustments": [
+        {
+            "dev": "John Doe",
+            "offset": 2
+        }
       ]
     }
   ],
@@ -36,3 +42,4 @@ def test_config_extractions():
     assert len(config.extracts[0].repos) == 2
     assert config.output_path == "~/.local/share/cache/TeamViewer"
     assert len(config.extracts[0].adjustments) == 1
+    assert len(config.extracts[0].tod_adjustments) == 1
