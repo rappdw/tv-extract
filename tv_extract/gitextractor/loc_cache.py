@@ -1,5 +1,6 @@
 import abc
 import pickle
+from pathlib import Path
 from tv_extract.data.revision_graph import RevisionGraph
 
 class LocCache:
@@ -13,13 +14,14 @@ class LocCache:
 
 
 class PickleCache(LocCache): # pragma: no cover
-    def __init__(self, cache):
+    def __init__(self, cache: Path):
         self.cache = cache
 
     def load_from_cache(self, graph: RevisionGraph):
-        cache_data = pickle.load(self.cache.open(mode='rb'))
-        for key, data in cache_data.items():
-            graph.revisions[key].file_infos = data[0]
+        if self.cache.exists():
+            cache_data = pickle.load(self.cache.open(mode='rb'))
+            for key, data in cache_data.items():
+                graph.revisions[key].file_infos = data[0]
 
     def save_to_cache(self, graph: RevisionGraph):
         cache_data = {}  # key by revision id, values tuple of: file_infos and deltas
