@@ -9,11 +9,11 @@ from shutil import copyfile
 
 from .util.cd import cd
 from .data import Config, Extract, PullRequest, Repo, Revision, RevisionGraph
-from .gitextractor import extract_complete_file_info, extract_revision_graph, extract_pr_data
+from .gitextractor import extract_revision_graph, extract_pr_data
+from .gitextractor.loc_cache import PickleCache
 
 
-
-class _FileHandles:
+class _FileHandles:  # pragma: no cover
     def __init__(self, output_dir):
         self.author_totals_info = open(os.path.join(output_dir, 'author_totals.csv'), 'w', encoding='utf8')
         self.author_totals_info_writer = csv.writer(self.author_totals_info)
@@ -61,40 +61,39 @@ class GitExtractor():
         self.cache_dir = cache_dir
         self.projectname = ''
 
-    def __enter__(self):
+    def __enter__(self): # pragma: no cover
         self.files = _FileHandles(self.output_dir)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb): # pragma: no cover
         self.files.close()
 
-    def collect(self, repo_cache: Path, repo: Repo):
+    def collect(self, repo_cache: Path, repo: Repo): # pragma: no cover
         self.projectname = repo.name
         with cd(str(repo_cache / repo.name)):
-            extract_cache = self.cache_dir / f'{repo.name}.cache_data.pkl'
+            cache = PickleCache(self.cache_dir / f'{repo.name}.cache_data.pkl')
+            graph = extract_revision_graph(cache)
+            self.process_graph(graph)
+            cache.save_to_cache(graph)
 
-            graph = extract_revision_graph()
-            self.load_from_cache(graph, extract_cache)
-            extract_complete_file_info(graph)
+    def process_graph(self, graph):
+        self.extract_total_authors(graph)
+        self.extract_pr_info(graph)
+        self.extract_code_info(graph)
+        self.extract_revision_info(graph)
 
-            self.extract_total_authors(graph)
-            self.extract_pr_info(graph)
-            self.extract_code_info(graph)
-            self.extract_revision_info(graph)
-
-            self.save_to_cache(graph, extract_cache)
-
-    def load_from_cache(self, graph: RevisionGraph, cache: Path):
-        if cache.exists():
+    def load_from_cache(self, graph: RevisionGraph, cache: Path): # pragma: no cover
+        if cache and cache.exists():
             cache_data = pickle.load(cache.open(mode='rb'))
             for key, data in cache_data.items():
                 graph.revisions[key].file_infos = data[0]
 
-    def save_to_cache(self, graph: RevisionGraph, cache: Path):
-        cache_data = {} # key by revision id, values tuple of: file_infos and deltas
-        for key, revision in graph.revisions.items():
-            if revision.file_infos or revision.delta:
-                cache_data[key] = [revision.file_infos, revision.delta]
-        pickle.dump(cache_data, cache.open(mode='wb'))
+    def save_to_cache(self, graph: RevisionGraph, cache: Path): # pragma: no cover
+        if cache and cache.exists():
+            cache_data = {} # key by revision id, values tuple of: file_infos and deltas
+            for key, revision in graph.revisions.items():
+                if revision.file_infos or revision.delta:
+                    cache_data[key] = [revision.file_infos, revision.delta]
+            pickle.dump(cache_data, cache.open(mode='wb'))
 
     def extract_total_authors(self, graph):
 
