@@ -37,7 +37,10 @@ def extract_config_from_json(config_data: dict) -> Config:
 
     output_path = config_data['output_path']
     log_level = config_data['logging'] if 'logging' in config_data else logging.INFO
-    return Config(extracts, output_path, config_data['mailmap_file'], log_level)
+    mailmap = None
+    if 'mailmap_file' in config_data:
+        mailmap = config_data['mailmap_file']
+    return Config(extracts, output_path, mailmap, log_level)
 
 
 def extract_config(config_file: Path) -> Config:

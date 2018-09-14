@@ -204,7 +204,9 @@ def git_extract(config: Config, cache_root: Path) -> None:
     repo_cache = cache_root / 'repos'
     repo_cache.mkdir(parents=True, exist_ok=True)
     mailmaps_to_delete = []
-    mailmap_file = Path(config.mailmap_file)
+    mailmap_file = None
+    if config.mailmap_file:
+        mailmap_file = Path(config.mailmap_file)
     repos = {}
     for extract in config.extracts:
         for repo in extract.repos:
@@ -215,7 +217,7 @@ def git_extract(config: Config, cache_root: Path) -> None:
         logging.info(f"Updating repo: {repo.name}")
         update_repo(git, repo, repo_cache)
         repo_mailmap_file = repo_cache / repo.name / '.mailmap'
-        if mailmap_file.exists():
+        if mailmap_file and mailmap_file.exists():
             if repo_mailmap_file.exists():
                 with open(repo_mailmap_file, 'a+') as file:
                     with open(mailmap_file, 'r') as input:
