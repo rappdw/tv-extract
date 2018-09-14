@@ -195,7 +195,7 @@ def update_repo(git, repo: Repo, repo_cache: Path):
         origin.fetch()
         origin.pull()
     else:
-        git.Git(repo_cache).clone(repo.remote)
+        git.Repo.clone_from(repo.remote, repo_cache)
 
 def git_extract(config: Config, cache_root: Path) -> None:
 
