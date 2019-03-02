@@ -20,7 +20,7 @@ def collect_file_info(revision_set: Iterable[Revision], fn_get_output):
             # for some reason if we combine these, tokei gives incorrect results!!!!
             lines = fn_get_output(['tokei']).split('\n')
             if len(lines) > 3:
-`                if 'Note: ' in lines[0]:
+                if 'Note: ' in lines[0]:
                     lines = lines[1:]
                 for line in lines[3:-3] + [lines[-2]]:
                     line = line.strip()
