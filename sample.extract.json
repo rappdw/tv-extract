@@ -1,0 +1,28 @@
+{
+  "awsregion": "us-west-2",
+  "extracts": [
+    {
+      "name": "sample",
+      "repos": [
+        {"name": "tsne-mp", "remote": "git@192.30.255.112:resero-labs/tsne.git"}
+      ],
+      "start_date": "2018-01-28",
+      "tod_adjustments": [
+        {
+          "dev": "Brian Jones",
+          "offset": 2
+        },
+        {
+          "dev": "Zachary Abzug",
+          "offset": 2
+        },
+        {
+          "dev": "Jeremy Jordan",
+          "offset": 2
+        }
+      ]
+    }
+  ],
+  "output_path": "/Users/drapp/.local/share/cache/TeamView",
+  "mailmap_file": "/Users/drapp/dev/team-view/tv-resero-config/mailmap"
+}
