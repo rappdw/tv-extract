@@ -219,12 +219,17 @@ def git_extract(config: Config, cache_root: Path) -> None:
         repo_mailmap_file = repo_cache / repo.name / '.mailmap'
         if mailmap_file and mailmap_file.exists():
             if repo_mailmap_file.exists():
-                with open(repo_mailmap_file, 'a+') as file:
-                    with open(mailmap_file, 'r') as input:
+                logging.info(f"Appending mailmap from config to repo: {repo_mailmap_file}")
+                with repo_mailmap_file.open(mode='a+') as file:
+                    with mailmap_file.open(mode='r') as input:
+                        file.write("\n")
                         file.write(input.read())
             else:
+                logging.info(f"Copying mailmap from config to repo: {repo_mailmap_file}")
                 mailmaps_to_delete.append(repo_mailmap_file)
                 copyfile(mailmap_file, repo_mailmap_file)
+        else:
+            logging.info("No mailmap to handle")
 
     extract_cache_dir = cache_root / 'extracts'
     extract_cache_dir.mkdir(parents=True, exist_ok=True)
@@ -239,5 +244,6 @@ def git_extract(config: Config, cache_root: Path) -> None:
                 extractor.collect(repo_cache, repo)
 
     for mailmap in mailmaps_to_delete:
+        logging.info(f"Deleting mailmap: {mailmap}")
         mailmap.unlink()
 
