@@ -197,39 +197,38 @@ def update_repo(git, repo: Repo, repo_cache: Path):
     else:
         git.Repo.clone_from(repo.remote, repo_dir)
 
+def handle_repo_mailmap(repo, repo_cache, mailmap_file) -> Path:
+    # do this here to avoid errors during import if git isn't installed and other aspects of tv-extract are used
+    import git
+    logging.info(f"Updating repo: {repo.name}")
+    update_repo(git, repo, repo_cache)
+    repo_mailmap_file = repo_cache / repo.name / '.mailmap'
+    if mailmap_file and mailmap_file.exists():
+        if repo_mailmap_file.exists():
+            logging.info(f"Appending mailmap from config to repo: {repo_mailmap_file}")
+            with repo_mailmap_file.open(mode='a+') as file:
+                with mailmap_file.open(mode='r') as input:
+                    file.write("\n")
+                    file.write(input.read())
+            repo_mailmap_file = None
+        else:
+            logging.info(f"Copying mailmap from config to repo: {repo_mailmap_file}")
+            copyfile(mailmap_file, repo_mailmap_file)
+    else:
+        logging.info("No mailmap to handle")
+        repo_mailmap_file = None
+    return repo_mailmap_file
+
+
 def git_extract(config: Config, cache_root: Path) -> None:
 
     # first run through all extracts defined in config and update all gitextractor repos for those extracts
     # including adding the specified mailmap file to the repo, or extending an existing mailmap file
     repo_cache = cache_root / 'repos'
     repo_cache.mkdir(parents=True, exist_ok=True)
-    mailmaps_to_delete = []
     mailmap_file = None
     if config.mailmap_file:
         mailmap_file = Path(config.mailmap_file)
-    repos = {}
-    for extract in config.extracts:
-        for repo in extract.repos:
-            repos[repo.name] = repo
-    # do this here to avoid errors during import if git isn't installed and other aspects of tv-extract are used
-    import git
-    for repo in repos.values():
-        logging.info(f"Updating repo: {repo.name}")
-        update_repo(git, repo, repo_cache)
-        repo_mailmap_file = repo_cache / repo.name / '.mailmap'
-        if mailmap_file and mailmap_file.exists():
-            if repo_mailmap_file.exists():
-                logging.info(f"Appending mailmap from config to repo: {repo_mailmap_file}")
-                with repo_mailmap_file.open(mode='a+') as file:
-                    with mailmap_file.open(mode='r') as input:
-                        file.write("\n")
-                        file.write(input.read())
-            else:
-                logging.info(f"Copying mailmap from config to repo: {repo_mailmap_file}")
-                mailmaps_to_delete.append(repo_mailmap_file)
-                copyfile(mailmap_file, repo_mailmap_file)
-        else:
-            logging.info("No mailmap to handle")
 
     extract_cache_dir = cache_root / 'extracts'
     extract_cache_dir.mkdir(parents=True, exist_ok=True)
@@ -241,9 +240,10 @@ def git_extract(config: Config, cache_root: Path) -> None:
         with extractor:
             for repo in extract.repos:
                 logging.info(f'********************* Creating Git Extract: {repo.name} *********************')
+                repo_mailmap_file = handle_repo_mailmap(repo, repo_cache, mailmap_file)
                 extractor.collect(repo_cache, repo)
+                if repo_mailmap_file:
+                    logging.info(f'Deleting temporary mailmap file: {repo_mailmap_file}')
+                    repo_mailmap_file.unlink()
 
-    for mailmap in mailmaps_to_delete:
-        logging.info(f"Deleting mailmap: {mailmap}")
-        mailmap.unlink()
 
