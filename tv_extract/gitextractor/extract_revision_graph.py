@@ -9,9 +9,9 @@ from tv_extract.util.shell_cmds import getpipeoutput
 from tv_extract.data import Revision, RevisionGraph
 
 command_dict = {
-    'original_commit': ['git rev-list --max-parents=0 HEAD'],
-    'initial_revisions': ['git rev-list --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "HEAD"', 'grep -v ^commit'],
-    'master_revisions': ['git rev-list --first-parent --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "HEAD"', 'grep -v ^commit'],
+    'original_commit': ['git rev-list --max-parents=0 origin/HEAD'],
+    'initial_revisions': ['git rev-list --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "origin/HEAD"', 'grep -v ^commit'],
+    'master_revisions': ['git rev-list --first-parent --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "origin/HEAD"', 'grep -v ^commit'],
 }
 
 def get_revisions(fn_get_output, graph, rev_list_cmds, is_master=False):

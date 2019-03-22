@@ -1,4 +1,5 @@
 import abc
+import logging
 import pickle
 from pathlib import Path
 from tv_extract.data.revision_graph import RevisionGraph
@@ -21,7 +22,10 @@ class PickleCache(LocCache): # pragma: no cover
         if self.cache.exists():
             cache_data = pickle.load(self.cache.open(mode='rb'))
             for key, data in cache_data.items():
-                graph.revisions[key].file_infos = data[0]
+                if key in graph.revisions:
+                    graph.revisions[key].file_infos = data[0]
+                else:
+                   logging.warning(f"{key} not found in git revisions. This shouldn't happen. Please investigate.")
 
     def save_to_cache(self, graph: RevisionGraph):
         cache_data = {}  # key by revision id, values tuple of: file_infos and deltas
