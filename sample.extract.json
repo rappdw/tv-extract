@@ -4,7 +4,7 @@
     {
       "name": "sample",
       "repos": [
-        {"name": "tsne-mp", "remote": "git@192.30.255.112:resero-labs/tsne.git"}
+        {"name": "phish-classification", "remote": "ssh://git@hq-stash.corp.proofpoint.com:7999/tresero/phish-classification.git"}
       ],
       "start_date": "2018-01-28",
       "tod_adjustments": [

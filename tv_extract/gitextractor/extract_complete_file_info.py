@@ -29,6 +29,10 @@ def collect_file_info(revision_set: Iterable[Revision], fn_get_output):
             else:
                 debug = '\n'.join(lines)
                 logging.warning(f"Unexpected results from tokei: \n{debug}")
+            # using lfs and the phish-classification repo has some issues that leaves
+            # the detached head in a messy state... go ahead and clear any changed files
+            # normally there shouldn't be any
+            fn_get_output([f'git checkout -- * >/dev/null 2>&1'])
         else:
             cache += 1
     logging.info(f"Total revisions: {total}. {cache} found in cache")
