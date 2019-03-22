@@ -240,10 +240,12 @@ def git_extract(config: Config, cache_root: Path) -> None:
         with extractor:
             for repo in extract.repos:
                 logging.info(f'********************* Creating Git Extract: {repo.name} *********************')
-                repo_mailmap_file = handle_repo_mailmap(repo, repo_cache, mailmap_file)
-                extractor.collect(repo_cache, repo)
-                if repo_mailmap_file:
-                    logging.info(f'Deleting temporary mailmap file: {repo_mailmap_file}')
-                    repo_mailmap_file.unlink()
-
+                try:
+                    repo_mailmap_file = handle_repo_mailmap(repo, repo_cache, mailmap_file)
+                    extractor.collect(repo_cache, repo)
+                    if repo_mailmap_file:
+                        logging.info(f'Deleting temporary mailmap file: {repo_mailmap_file}')
+                        repo_mailmap_file.unlink()
+                except:
+                    logging.exception(f"Unexpected error processing {repo.name}. Continuing...")
 
