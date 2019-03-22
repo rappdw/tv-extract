@@ -165,14 +165,15 @@ class GitExtractor():
                                 file_info.blank_line_count
                             ])
 
-        for file_info in rev_max.file_infos.values():
-            self.files.repo_info_writer.writerow([self.projectname,
-                                                  file_info.language,
-                                                  file_info.file_count,
-                                                  file_info.line_count,
-                                                  file_info.code_line_count,
-                                                  file_info.comment_line_count,
-                                                  file_info.blank_line_count])
+        if rev_max:
+            for file_info in rev_max.file_infos.values():
+                self.files.repo_info_writer.writerow([self.projectname,
+                                                      file_info.language,
+                                                      file_info.file_count,
+                                                      file_info.line_count,
+                                                      file_info.code_line_count,
+                                                      file_info.comment_line_count,
+                                                      file_info.blank_line_count])
 
     def extract_revision_info(self, graph):
         for revision in graph.revisions.values():
