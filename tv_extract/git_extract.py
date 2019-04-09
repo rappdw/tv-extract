@@ -5,7 +5,7 @@ import pickle
 
 from collections import defaultdict
 from pathlib import Path
-from shutil import copyfile
+from shutil import copyfile, rmtree
 
 from .util.cd import cd
 from .data import Config, Extract, PullRequest, Repo, Revision, RevisionGraph
@@ -191,10 +191,14 @@ class GitExtractor():
 def update_repo(git, repo: Repo, repo_cache: Path):
     repo_dir = repo_cache / repo.name
     if repo_dir.exists():
-        repo = git.Repo(str(repo_dir))
-        origin = repo.remotes.origin
-        origin.fetch()
-        origin.pull()
+        try:
+            git_repo = git.Repo(str(repo_dir))
+            origin = git_repo.remotes.origin
+            origin.fetch()
+            origin.pull()
+        except git.exc.GitCommandError:
+            rmtree(str(repo_dir))
+            git.Repo.clone_from(repo.remote, str(repo_dir))
     else:
         git.Repo.clone_from(repo.remote, repo_dir)
 

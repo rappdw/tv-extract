@@ -31,6 +31,12 @@ def extract_revision_graph(cache: LocCache) -> RevisionGraph:
     '''
     return _extract_revision_graph(cache, getpipeoutput)
 
+def get_ongoing_revisions(fn_get_output, graph):
+    branches = fn_get_output(['git branch -r --no-merged']).split('\n')
+    for branch in branches:
+        branch = branch.strip()
+        if branch and not '->' in branch:
+            get_revisions(fn_get_output, graph, [f'git rev-list --pretty="%T|%H|%at|%ai|%aN|%aE|%P|%s" "{branch}"', 'grep -v ^commit'])
 
 def _extract_revision_graph(cache: LocCache, fn_get_output) -> RevisionGraph:
     original_commit = fn_get_output(command_dict['original_commit'])
@@ -43,6 +49,14 @@ def _extract_revision_graph(cache: LocCache, fn_get_output) -> RevisionGraph:
     # see: https://stackoverflow.com/questions/15875253/git-log-to-return-only-the-commits-made-to-the-master-branch
     # poke's answer
     get_revisions(fn_get_output, graph, command_dict['master_revisions'], True)
+
+    # This approach misses work that is on-going as well as work that has been abandoned,
+    # although good git hygiene practices should eliminate most of the latter.
+    #
+    # To account for ongoing work, let's look at using `git branch -r --no-merged` and including
+    # those branches into the 'initial_revisions' by replacing "origin/HEAD" with the non-merged
+    # branches
+    get_ongoing_revisions(fn_get_output, graph)
 
     # now fix up parentage based on what we've seen with the --first-parent logs
     for revision in graph.revisions.values():
