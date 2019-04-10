@@ -253,4 +253,11 @@ def git_extract(config: Config, cache_root: Path) -> None:
                         repo_mailmap_file.unlink()
                 except:
                     logging.exception(f"Unexpected error processing {repo.name}. Continuing...")
+        # output ignores.csv
+        ignores_info = (extract_path / 'ignore.csv').open('w', encoding='utf8')
+        ignores_info_writer = csv.writer(ignores_info)
+        ignores_info_writer.writerow(['Author'])
+        for author in extract.ignores:
+            ignores_info_writer.writerow([author])
+        ignores_info.close()
 

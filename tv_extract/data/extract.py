@@ -1,6 +1,6 @@
 from .repo import Repo
 from dataclasses import dataclass, field
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Set
 from datetime import datetime, timezone
 
 @dataclass
@@ -11,6 +11,7 @@ class Extract:
     end_date:str = ''
     adjustments:List[str] = field(default_factory=lambda: [])
     tod_adjustments:List[Tuple[str, int]] = field(default_factory=lambda: [])
+    ignores:Set[str] = field(default_factory=lambda: set())
 
     def get_begin_end_timestamps(self):
         if self.start_date:

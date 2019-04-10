@@ -21,6 +21,14 @@
           "dev": "Jeremy Jordan",
           "offset": 2
         }
+      ],
+      "ignore": [
+        "David Lemaylan",
+        "Davit Khurshudyan",
+        "Emina",
+        "Felix Ebert",
+        "Friedrich Lindenberg",
+        "Tarashish Mishra"
       ]
     }
   ],

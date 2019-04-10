@@ -20,6 +20,7 @@ def extract_config_from_json(config_data: dict) -> Config:
         repos = []
         adjustments = []
         tod_adjustments = []
+        ignores = set()
         for repo_dict in repo_dicts:
             repos.append(Repo(repo_dict['name'], repo_dict['remote']))
         start_date = ''
@@ -36,7 +37,9 @@ def extract_config_from_json(config_data: dict) -> Config:
         if 'tod_adjustments' in extract_dict:
             for adjustment in extract_dict['tod_adjustments']:
                 tod_adjustments.append((adjustment['dev'], adjustment['offset']))
-        extracts.append(Extract(extract_dict['name'], repos, start_date, end_date, adjustments, tod_adjustments))
+        if 'ignore' in extract_dict:
+            ignores = extract_dict['ignore']
+        extracts.append(Extract(extract_dict['name'], repos, start_date, end_date, adjustments, tod_adjustments, ignores))
 
     output_path = config_data['output_path']
     log_level = config_data['logging'] if 'logging' in config_data else logging.INFO
