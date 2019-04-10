@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import json
 import logging
 import sys
@@ -24,9 +25,11 @@ def extract_config_from_json(config_data: dict) -> Config:
         start_date = ''
         if 'start_date' in extract_dict:
             start_date = extract_dict['start_date']
+            start_date = handle_delta_date(start_date)
         end_date = ''
         if 'end_date' in extract_dict:
             end_date = extract_dict['end_date']
+            end_date = handle_delta_date(end_date)
         if 'adjustments' in extract_dict:
             for adjustment in extract_dict['adjustments']:
                 adjustments.append(adjustment)
@@ -41,6 +44,14 @@ def extract_config_from_json(config_data: dict) -> Config:
     if 'mailmap_file' in config_data:
         mailmap = config_data['mailmap_file']
     return Config(extracts, output_path, mailmap, log_level)
+
+
+def handle_delta_date(date_str):
+    if date_str.startswith('delta:'):
+        _, delta = date_str.split(':')
+        delta = int(delta)
+        date_str = (datetime.datetime.now() + datetime.timedelta(days=delta)).strftime('%Y-%m-%d')
+    return date_str
 
 
 def extract_config(config_file: Path) -> Config:
